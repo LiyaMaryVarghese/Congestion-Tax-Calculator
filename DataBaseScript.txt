@@ -1,0 +1,133 @@
+-- Create Script just For table Reference, since the application created using Entity Framework code first approach with Local DBconnection. Also added test values through code  
+
+/***********************************************************************************************************************************/
+
+--DROP DATABASE  [ IF EXISTS ]
+--    CongestionTax;
+
+--GO
+
+CREATE DATABASE CongestionTax
+GO
+
+USE [CongestionTax]
+GO
+
+/****** Object:  Table [dbo].[City]    Script Date: 2022-09-15 08:57:11 ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[City](
+	[CityId] [int] IDENTITY(1,1) NOT NULL,
+	[Name] [nvarchar](max) NOT NULL,
+ CONSTRAINT [PK_City] PRIMARY KEY CLUSTERED 
+(
+	[CityId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+
+
+
+GO
+
+/****** Object:  Table [dbo].[VehicleType]    Script Date: 2022-09-15 08:57:29 ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[VehicleType](
+	[VehicleTypeId] [int] IDENTITY(1,1) NOT NULL,
+	[Type] [nvarchar](max) NOT NULL,
+	[DisplayName] [nvarchar](max) NOT NULL,
+ CONSTRAINT [PK_VehicleType] PRIMARY KEY CLUSTERED 
+(
+	[VehicleTypeId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+
+
+/****** Object:  Table [dbo].[ExcemptVehicle]    Script Date: 2022-09-15 11:41:37 ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[ExcemptVehicle](
+	[ExcemptVehicleId] [int] IDENTITY(1,1) NOT NULL,
+	[VehicleTypeId] [int] NOT NULL,
+ CONSTRAINT [PK_ExcemptVehicle] PRIMARY KEY CLUSTERED 
+(
+	[ExcemptVehicleId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
+ALTER TABLE [dbo].[ExcemptVehicle]  WITH CHECK ADD  CONSTRAINT [FK_ExcemptVehicle_VehicleType] FOREIGN KEY([ExcemptVehicleId])
+REFERENCES [dbo].[VehicleType] ([VehicleTypeId])
+GO
+
+ALTER TABLE [dbo].[ExcemptVehicle] CHECK CONSTRAINT [FK_ExcemptVehicle_VehicleType]
+GO
+
+
+GO
+
+/****** Object: Table [dbo].[VehicleEntry] Script Date: 2022-09-15 08:33:57 ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[VehicleEntry] (
+    [VehicleEntryId] INT            IDENTITY (1, 1) NOT NULL,
+    [CityId]         INT            NOT NULL,
+    [VehicleTypeId]  INT            NOT NULL,
+    [VehicleNumber]  NVARCHAR (MAX) NOT NULL,
+    [EntryTime]      DATETIME2 (7)  NOT NULL
+);
+
+
+
+
+GO
+
+/****** Object:  Table [dbo].[CityTaxRule]    Script Date: 2022-09-15 08:57:17 ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[CityTaxRule](
+	[TaxRuleId] [int] IDENTITY(1,1) NOT NULL,
+	[CityId] [int] NOT NULL,
+	[FromTime] [bigint] NOT NULL,
+	[ToTime] [bigint] NOT NULL,
+	[Tax] [int] NOT NULL,
+ CONSTRAINT [PK_CityTaxRule] PRIMARY KEY CLUSTERED 
+(
+	[TaxRuleId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
+ALTER TABLE [dbo].[CityTaxRule]  WITH CHECK ADD  CONSTRAINT [FK_CityTaxRule_City] FOREIGN KEY([CityId])
+REFERENCES [dbo].[City] ([CityId])
+GO
+
+ALTER TABLE [dbo].[CityTaxRule] CHECK CONSTRAINT [FK_CityTaxRule_City]
+GO
+
+
+
+
+

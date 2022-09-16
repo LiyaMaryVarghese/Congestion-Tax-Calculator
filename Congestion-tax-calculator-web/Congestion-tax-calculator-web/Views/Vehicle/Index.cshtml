@@ -1,0 +1,172 @@
+﻿@*@model Congestion_tax_calculator_web.Models.VehicleTaxModel*@
+@model Congestion_tax_calculator_web.Models.CongestionTaxModel
+@{
+    ViewData["Title"] = "Vehicle Page";
+}
+
+<div class="text-center">
+    <h1 class="display-6">Welcome to Congestion tax Calculator</h1>
+    <p>
+        The congestion taxes are intended to improve traffic flow in Sweden. Using this you can see the congestion tax for a Specific date.
+
+    </p>
+
+
+    <div class="form-group container">
+        <div class="row">
+            <div class="col-md-6 border border-secondary">
+                @using (Html.BeginForm("ShowTotalTax", "Vehicle", FormMethod.Post))
+                {
+                    <label class="control-label" style="float:left"> Select City</label>
+
+                    <div style="margin:5px;">
+
+                        @Html.DropDownListFor(m=>m.SelectedCity , new SelectList(Model.City, "CityId", "Name"), htmlAttributes: new {id ="ddlCity", @class = "form-control dropdown-toggle" })
+
+                    </div>
+                    <label class="control-label" style="float:left"> Select Vehicle Type</label>
+
+                    <div style="margin:5px;">
+
+                        @Html.DropDownListFor(m=>m.SelectedVehicle , new SelectList(Model.VehicleType, "VehicleTypeId", "DisplayName"), htmlAttributes: new { @class = "form-control dropdown-toggle" })
+
+                    </div>
+
+
+                    <label class="control-label" style="float:left"> Select Date </label>
+                    <div id='datepicker' style="margin:5px;">
+
+                        <input type="date" name="SelectedDate" class="form-control" value="@Model.SelectedDate.ToString("yyyy-MM-dd")" />
+
+                    </div>
+
+                    <label class="control-label" style="float:left"> Vehicle Number (Optional) </label>
+                    <div id='datepicker' style="margin:5px;">
+
+                        <input type="text" name="VehicleNumber" class="form-control" value="@Model.VehicleNumber" />
+
+                    </div>
+
+                    <input type="submit" name="save" value="Calculate Tax" />
+
+                    <div>
+                        @if (ViewBag.showDetails)
+                        {
+                            @if (Model.CongestionTaxInput?.VehicleTaxDetails == null || Model.CongestionTaxInput?.VehicleTaxDetails.Count == 0)
+                            {
+                                <label class="control-label" style="margin:20px" > No Result Found</label>
+                            }
+                            else
+                            {
+                                <div style="margin:20px">
+                                    <label class="control-label" style="color:blue"> Total tax for the selected date is :<b> @Model.CongestionTaxInput.TotalTax </b>  SEK </label>
+                                </div>
+                                <div style="height:300px; overflow:auto">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">#</th>
+                                                <th scope="col">Time</th>
+                                                <th scope="col">Vehicle Number</th>
+                                            </tr>
+                                        </thead>
+                                        @{
+                                            int rowNo = 0;
+                                        }
+
+                                        @foreach (var dates in Model.CongestionTaxInput.VehicleTaxDetails)
+                                        {
+
+                                            <tbody>
+                                                <tr>
+                                                    <th scope="row">@(rowNo += 1)</th>
+                                                    <td>
+                                                        <label class="control-label"> @dates.EntryTime.TimeOfDay </label>
+                                                    </td>
+
+                                                    <td>
+                                                        <label class="control-label"> @dates.VehicleNumber </label>
+                                                    </td>
+
+                                                </tr>
+                                            </tbody>
+                                        }
+                                    </table>
+                                </div>
+
+
+                            }
+                        }
+                    </div>
+
+
+                }
+            </div>
+
+            @if (Model.CityTaxRate != null && Model.CityTaxRate.Count >= 0)
+            {
+
+
+                <div class="col-md-6 border border-secondary">
+                    <label class="control-label"> City Wise Tax Rate </label>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Time</th>
+                                <th scope="col">Amount SEK </th>
+                            </tr>
+                        </thead>
+
+                        @foreach (var data in Model.CityTaxRate)
+                        {
+                            <tbody>
+                                <tr>
+
+                                    <td>
+                                        <label class="control-label">@data.FromTime –@data.ToTime  </label>
+                                    </td>
+
+                                    <td>
+                                        <label class="control-label"> @data.Tax</label>
+                                    </td>
+
+                                </tr>
+
+
+                            </tbody>
+                        }
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+
+    @section Scripts
+        {
+
+        <script>
+
+
+            //$(document).ready(function () {
+            //    $("#ddlCity").on("change", function () {
+            //        var selected = $(this).val();
+            //        $.ajax(
+            //            {
+            //                url: '/Vehicle/GetTaxDetails?id=' + selected,
+            //                type: 'GET',
+            //                data: "",
+            //                contentType: 'application/json; charset=utf-8',
+            //                success: function (data) {
+
+            //                },
+            //                error: function () {
+
+            //                }
+            //            });
+            //    });
+            });
+
+
+        </script>
+    }
+    </div>
